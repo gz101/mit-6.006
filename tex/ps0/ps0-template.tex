@@ -1,0 +1,154 @@
+%
+% 6.006 problem set 0 solutions template
+%
+\documentclass[12pt,twoside]{article}
+
+\input{macros-sp20}
+\newcommand{\theproblemsetnum}{0}
+
+\title{6.006 Problem Set 0}
+
+\begin{document}
+
+\handout{Problem Set \theproblemsetnum}
+
+\setlength{\parindent}{0pt}
+\medskip\hrulefill\medskip
+
+{\bf Name:} Gabriel Chiong
+
+\medskip\hrulefill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% See below for common and useful latex constructs. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Some useful commands:
+% $f(x) = \Theta(x)$
+% $T(x, y) \leq \log(x) + 2^y + \binom{2n}{n}$
+% \ttt{code\_function}
+
+
+% You can create unnumbered lists as follows:
+% \begin{itemize}
+%     \item First item in a list
+%         \begin{itemize}
+%             \item First item in a list
+%                 \begin{itemize}
+%                     \item First item in a list
+%                     \item Second item in a list
+%                 \end{itemize}
+%             \item Second item in a list
+%         \end{itemize}
+%     \item Second item in a list
+% \end{itemize}
+
+% You can create numbered lists as follows:
+% \begin{enumerate}
+%     \item First item in a list
+%     \item Second item in a list
+%     \item Third item in a list
+% \end{enumerate}
+
+% You can write aligned equations as follows:
+% \begin{align}
+%     \begin{split}
+%         (x+y)^3 &= (x+y)^2(x+y) \\
+%                 &= (x^2+2xy+y^2)(x+y) \\
+%                 &= (x^3+2x^2y+xy^2) + (x^2y+2xy^2+y^3) \\
+%                 &= x^3+3x^2y+3xy^2+y^3
+%     \end{split}
+% \end{align}
+
+% You can create grids/matrices as follows:
+% \begin{align}
+%     A =
+%     \begin{bmatrix}
+%         A_{11} & A_{21} \\
+%         A_{21} & A_{22}
+%     \end{bmatrix}
+% \end{align}
+
+\begin{problems}
+
+\problem  % Problem 1
+
+\begin{problemparts}
+\problempart % Problem 1a
+\(A \cap B = \{6, 12\}\)
+\problempart % Problem 1b
+\(|A \cup B| = 7\)
+\problempart % Problem 1c
+\(|A-B| = 3\)
+\end{problemparts}
+
+\problem  % Problem 2
+
+\begin{problemparts}
+\problempart % Problem 2a
+\(E[X]=0.5+0.5+0.5=1.5\)
+\problempart % Problem 2b
+\(E[Y]=7/2 \times 7/2=12.25\)
+\problempart % Problem 2c
+\(E[X+Y]=E[X]+E[Y]=13.75\) (by linearity of expectation).
+\end{problemparts}
+
+\problem  % Problem 3
+
+\begin{problemparts}
+\problempart % Problem 3a
+\(A \equiv B \pmod 2\) is True.
+\problempart % Problem 3b
+\(A \equiv B \pmod 3\) is False.
+\problempart % Problem 3c
+\(A \equiv B \pmod 4\) is False.
+\end{problemparts}
+
+\problem  % Problem 4
+\begin{proof}
+Let \(P(n)\) be the predicate as described in the question, where \(n\) is an integer and \(n \geq 1\). We proceed by induction on \(n\).
+
+\textit{Base case}. Our Base case occurs when \(n=1\). The left-hand side of the equation is then evaluated as \(\sum_{i=1}^n i^3 = 1^3 = 1\). The right-hand side of the equation is also evaluated as \(\left[ \frac{1(1+1)}{2} \right]^2 = (2/2)^2 = 1\). Thus, the Base case is satisfied.
+
+\textit{Inductive step}. Assume that the predicate is true for all integers \(1,\ldots,n\). For \(P(n+1)\), we have
+\begin{align*}
+    \begin{split}
+        \sum_{i=1}^{n+1}i^3 &= (n+1)^3 + \sum_{i=1}^n i^3 \\
+                &= (n+1)^3 + \left[ \frac{n(n+1)}{2} \right]^2 \text{\;\;\;\;(by the Inductive Hypothesis)} \\
+                &= \frac{(n+1)^2}{2^2} \left( 2^2(n+1)+n^2 \right) \\
+                &= \frac{(n+1)^2(n+2)^2}{2^2} \text{\;\;\;\; (by factoring the right term from the previous step).}
+    \end{split}
+\end{align*}
+And the desired result that \(\sum_{i=1}^{n+1}i^3 = \left[ \frac{(n+1)(n+2)}{2} \right]^2\) naturally follows. This concludes the proof.
+\end{proof}
+
+\newpage
+\problem  % Problem 5
+\begin{proof}
+Let \(P(n)\) be the predicate that every connected undirected graph \(G=(V,E)\) for which \(|E|=|V|-1\) is acyclic, where \(n\) is the number of vertices.
+
+\textit{Base case}. Our Base case occurs when \(n=1\) since we cannot have a negative number of edges. A graph \(G\) with 1 vertex and no edges trivially satisfies the predicate. Thus, \(P(0)\) holds.
+
+\textit{Inductive step}. Assume that the predicate is true for all graphs with number of edges from \(0,\ldots,n\). In the case that \(P(n+1)\), graph \(G\) has \(n+1\) vertices and \(n\) edges. Since \(G\) is connected, every vertex connects to at least one edge. Since the number of edges connecting the vertices is one less than the total number of vertices, there must be one vertex with degree 1. Suppose we remove that degree-1 vertex (and the accompanying edge), say \(v_0\). The resultant graph, \(G'\) then is connected, and has exactly \(n\) vertices and \(n-1\) edges. \(v_0\) could not have been part of a cycle since it only has a degree of 1, so the only way \(G\) has a cycle is if \(G'\) has a cycle. But we know \(G'\) is acyclic by the Inductive Hypothesis, therefore \(G\) must be acyclic. This concludes the proof.
+\end{proof}
+
+\vfill
+\problem  % Problem 6
+Submit your implementation to {\small\url{alg.mit.edu}}.
+
+\begin{lstlisting}
+def count_long_subarray(A):
+    '''
+    Input:  A     | Python Tuple of positive integers
+    Output: count | number of longest increasing subarrays of A
+    '''
+    count = 0
+    ##################
+    # YOUR CODE HERE #
+    ##################
+    return count
+\end{lstlisting}
+
+\end{problems}
+
+\end{document}
