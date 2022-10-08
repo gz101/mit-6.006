@@ -1,0 +1,287 @@
+%
+% 6.006 problem set 7 solutions template
+%
+\documentclass[12pt,twoside]{article}
+
+\input{macros-sp20}
+\newcommand{\theproblemsetnum}{7}
+
+\title{6.006 Problem Set 7}
+
+\begin{document}
+
+\handout{Problem Set \theproblemsetnum}
+
+\setlength{\parindent}{0pt}
+\medskip\hrulefill\medskip
+
+{\bf Name:} Gabriel Chiong
+
+\medskip
+
+{\bf Collaborators:} None
+
+\medskip\hrulefill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% See below for common and useful latex constructs. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Some useful commands:
+%$f(x) = \Theta(x)$
+%$T(x, y) \leq \log(x) + 2^y + \binom{2n}{n}$
+% {\tt code\_function}
+
+
+% You can create unnumbered lists as follows:
+%\begin{itemize}
+%    \item First item in a list
+%        \begin{itemize}
+%            \item First item in a list
+%                \begin{itemize}
+%                    \item First item in a list
+%                    \item Second item in a list
+%                \end{itemize}
+%            \item Second item in a list
+%        \end{itemize}
+%    \item Second item in a list
+%\end{itemize}
+
+% You can create numbered lists as follows:
+%\begin{enumerate}
+%    \item First item in a list
+%    \item Second item in a list
+%    \item Third item in a list
+%\end{enumerate}
+
+% You can write aligned equations as follows:
+%\begin{align}
+%    \begin{split}
+%        (x+y)^3 &= (x+y)^2(x+y) \\
+%                &= (x^2+2xy+y^2)(x+y) \\
+%                &= (x^3+2x^2y+xy^2) + (x^2y+2xy^2+y^3) \\
+%                &= x^3+3x^2y+3xy^2+y^3
+%    \end{split}
+%\end{align}
+
+% You can create grids/matrices as follows:
+%\begin{align}
+%    A =
+%    \begin{bmatrix}
+%        A_{11} & A_{21} \\
+%        A_{21} & A_{22}
+%    \end{bmatrix}
+%\end{align}
+
+% You can include images and PDFs as follows:
+% \includegraphics[width=0.5\textwidth]{img.jpg}
+
+\begin{problems}
+
+\problem  % Problem 1
+
+Subproblems:
+\begin{itemize}
+    \item Let $x(i)$ denote the maximum delegates that Torr can win in state $i$ for all $i \in \{1,\ldots,n+1\}$.
+\end{itemize}
+
+Relate:
+\begin{itemize}
+    \item Torr can either choose to campaign or not on any day.
+    \item If she chooses to campaign on day $i$, then $x_c(i)=d_i+z_{i+1}+z_{i+2}+x(i+3)$.
+    \item If she chooses to do nothing on day $i$, then $x_n(i)=z_i+x(i+1)$.
+    \item Therefore the overall relation can be written as $x(i)=\max\{x_c(i),x_n(i)\}$.
+\end{itemize}
+
+Topological order:
+\begin{itemize}
+    \item $x(i)$ only depends on subproblems with strictly larger $i$, therefore the relation graph is a DAG.
+\end{itemize}
+
+Base:
+\begin{itemize}
+    \item For $i>n$, we have $x(i)=0$.
+    \item For $i=n$, we have $x(i)=d_n$.
+    \item For $i=n-1$, we have $x(i)=\max\{d_i+z_n, z_i+d_n\}$.
+\end{itemize}
+
+Original:
+\begin{itemize}
+    \item Calculate $x(1)$ and check if $x(1)>\lfloor D/2 \rfloor + 1$.
+\end{itemize}
+
+Time:
+\begin{itemize}
+    \item There are $n+1$ subproblems including the base case, and constant $O(1)$ work done per sub-problem. Therefore, the overall running time is $O(n)$.
+\end{itemize}
+
+\newpage
+\problem  % Problem 2
+We first sort the tigers by age using an $O(n\log n)$ algorithm like merge sort. Next, sort the cages by distance in increasing order in $O(n^2\log n)$ time, again using merge sort.
+
+Subproblems:
+\begin{itemize}
+    \item Define $x(i,j)$ be the minimum total discomfort for tigers \verb|T[i:]| in cages \verb|C[j:]| for all $i \in \{0,\ldots,n\}$ and $j \in \{0,\ldots,n^2\}$.
+\end{itemize}
+
+Relate:
+\begin{itemize}
+    \item Let the discomfort $d(i,j)$ of tiger $i$ in cage $j$ be $s_i-c_j$ if $s_i>c_j$ and 0 otherwise.
+    \item We can choose to match every $i,j$ or not, therefore we have $x(i,j)=\min\{d(i,j)+x(i+1,j+1),x(i,j+1)\}$.
+\end{itemize}
+
+Topological order:
+\begin{itemize}
+    \item $x(i,j)$ at any stage relies on strictly larger subproblem $j$s, therefore the relation graph is a DAG.
+\end{itemize}
+
+Base:
+\begin{itemize}
+    \item $x(n,j)=0$, since there are no more tigers are left to match, there can be no more additional discomfort.
+    \item $x(i,n^2)=\infty$, to penalize the scenario of not matching all tigers to cages.
+\end{itemize}
+
+Original:
+\begin{itemize}
+    \item $x(0,0)$ to calculate the discomfort considering all tigers and all cages.
+    \item We can store parent pointers to reconstruct the optimal assignment.
+\end{itemize}
+
+Time:
+\begin{itemize}
+    \item There are $(n+1)(n^2+1)=O(n^3)$ subproblems.
+    \item Each subproblem takes a constant $O(1)$ amount of work.
+    \item Therefore the overall algorithm runs in $O(n^3)$ time as required.
+\end{itemize}
+
+\newpage
+\problem  % Problem 3
+
+Subproblems:
+\begin{itemize}
+    \item We define $i \in \{0, 1\}$ as an indicator of the parity of the number of even or odd paths.
+    \item Let $x(v,i)$ be the number of even paths from $(s,v)$ if $i=0$ and the number of odd paths is $i=1$ for all $v \in V$.
+    \item Therefore, there are effectively two vertices for every vertex in the original graph $G$.
+\end{itemize}
+
+Relate:
+\begin{itemize}
+    \item Let $\chi(k)$ be a function with returns 1 if $k$ is even, and 0 otherwise.
+    \item Then we can define $x(v,i)=\sum \{x(u, \chi(w(u,v)+i)):u \in Adj^-(v)\}$.
+    \item $u$ is the set of all incoming vertices to $v$.
+\end{itemize}
+
+Topological order:
+\begin{itemize}
+    \item $x(v,i)$ depends only on $x(u,j)$ where $u$ appears before $v$ int he topological order of $G$.
+\end{itemize}
+
+Base:
+\begin{itemize}
+    \item $x(s,0)=1$, since $0$ is an even number.
+    \item $x(s,1)=0$, for the case where there are no odd length paths from $(s,s)$.
+    \item $x(v,0)=x(v,1)=0$ for all $v: Adj^-(v)=\emptyset$, where there are no incoming vertices to $v$.
+\end{itemize}
+
+Original:
+\begin{itemize}
+    \item $x(t,1)$ calculates the odd paths in reverse topological order.
+\end{itemize}
+
+Time:
+\begin{itemize}
+    \item There are $2|V|$ subproblems (a vertex for each odd/even pair).
+    \item Each subproblem requires iterating over all incoming vertices, which is $O(\deg^-(v))$.
+    \item Therefore, the overall runtime is $O(2 \sum_{v \in V} \deg^-(v))=O(|V|+|E|)$, which is linear in the input graph size.
+\end{itemize}
+
+\newpage
+\problem  % Problem 4
+As the game progresses, the slices eaten by round are cyclically consecutive (since the slices are eaten in $\alpha_i$ to $\alpha_i+\pi$). Therefore our subproblems can be consecutive cyclic subarrays. Since each sibling wishes to maximize tastiness, our subproblems require an indicator for which sibiling is currently making the choice.
+
+Let $v(i,j)$ be the tastiness of the $j$ slices counter-clockwise from angle $\alpha_i$, specifically $v(i,j)=\sum_{k=0}^{j-1}t_{((i+k)\pmod{2n})}$, where $i\in \{0,\ldots,2n-1\}$ and $j\in \{0,\ldots,n\}$. There are $O(n^2)$ ways to construct a $v(i,j)$, and each can be computed in $O(n)$ time for an overall time of $O(n^3)$.
+
+Subproblems:
+\begin{itemize}
+    \item Let $x(i,j,p)$ be the maximum tastiness Liza can achieve with the $j$ slices counter-clockwise from $\alpha_i$ remaining, when either Liza is the chooser ($p=1$), or Lie is the chooser ($p=2)$. 
+    \item Also let $i,j,p$ be defined as $i \in \{0,\ldots,2n-1\}$, $j \in \{0,\ldots,n\}$, and $p\in \{1,2\}$.
+\end{itemize}
+
+Relate:
+\begin{itemize}
+    \item Chooser can choose any proper angle and then choose a side. Therefore, we consider all possibilities.
+    \item Angle $\alpha_{i+k}$ is proper for any $k \in \{1,\ldots,j-1\}$.
+    \item Chooser eats either $k$ slices between $\alpha_i$ and $\alpha_{i+k}$ or $j-k$ slices between $\alpha_{i+k}$ and $\alpha_{i+j}$.
+    \item Neither gains or loses tastiness from the choice of the other.
+    \item For Liza, $x(i,j,1)=\max\{\max\{v(i,k)+x(i+k,j-k,2), v(i+k,j-k)+x(i,k,2)\} : k \in \{1,\ldots,j-1\}\}$.
+    \item For Lie, $x(i,j,2)=\min\{\min\{x(i+k,j-k,1),x(i,k,1)\} : k \in \{1,\ldots,j-1\}\}$.
+\end{itemize}
+
+Topological order:
+\begin{itemize}
+    \item $x(i,j,p)$ only depends on subproblems with strictly smaller $j$, therefore the relation graph is a DAG.
+\end{itemize}
+
+Base:
+\begin{itemize}
+    \item Liza eats the last slice, $x(i,1,1)=t_i$, for all $i \in \{1,\ldots,2n\}$.
+    \item Lie eats the last slice, $x(i,1,2)=0$, for all $i \in \{1,\ldots,2n\}$.
+\end{itemize}
+
+Original
+\begin{itemize}
+    \item Liza starts the game, and the maximum tastiness on a half and letting Lie choose on the other half.
+    \item $\max\{x(i,n,2)+v(((i+n)\pmod {2n}),n):i \in \{0,\ldots,2n-1\}\}$
+\end{itemize}
+
+Time:
+\begin{itemize}
+    \item There are $2(2n)(n+1)=O(n^2)$ subproblems in total, each requiring $O(n)$ work per subproblem. The original also requires $O(n)$ work, so the overall running time is $O(n^3)$.
+\end{itemize}
+
+\newpage
+\problem  % Problem 5
+
+Subproblems:
+\begin{itemize}
+    \item Let $x(j)$ be the longest decreasing subsequence of prices that doesn't skip days in \verb|P[j:| that includes price \verb|P[j]|, for all $j \in \{0,\ldots,nk-1\}$.
+\end{itemize}
+
+Relate:
+\begin{itemize}
+    \item Next stock price information in the sequence is at a later time in the same day or the next, so we iterate over all possibilities.
+    \item At price index $j$, there are $(k-1)-(j \mod k)$ prices left in the same day, then there are $k$ prices the following day (if it exists).
+    \item The last next price index is $f(j)=\min\{j+(k-1)-(j \mod k)+k,nk-1\}$.
+    \item This results in the relation $x(j)=1+\max\{x(d):d\in\{j+1,\ldots,f(j)\} \text{ and } P[j]>P[d]\}\cup \{0\}$.
+\end{itemize}
+
+Topological order:
+\begin{itemize}
+    \item $x(j)$ only depends on subproblems with strictly larger $j$, so relation graph is a DAG.
+\end{itemize}
+
+Base:
+\begin{itemize}
+    \item When only one item remains, $x(nk-1)=1$.
+\end{itemize}
+
+Original:
+\begin{itemize}
+    \item The shorting value is $\max\{x(j): j\in \{0,\ldots,nk-1\}\}$.
+\end{itemize}
+
+Time:
+\begin{itemize}
+    \item There are $nk$ subproblems, and $O(k)$ work per subproblem. 
+    \item The work for original is $O(nk)$, but is dominated by the work for the subproblems. 
+    \item Therefore, the overall running time is $O(nk^2)$.
+\end{itemize}
+
+\begin{problemparts}
+\problempart % Problem 5a
+\problempart Submit your implementation to {\small\url{alg.mit.edu}}.
+\end{problemparts}
+
+\end{problems}
+
+\end{document}
