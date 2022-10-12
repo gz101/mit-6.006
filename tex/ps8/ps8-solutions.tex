@@ -1,0 +1,260 @@
+%
+% 6.006 problem set 8 solutions template
+%
+\documentclass[12pt,twoside]{article}
+
+\input{macros-sp20}
+\newcommand{\theproblemsetnum}{8}
+
+\title{6.006 Problem Set 8}
+
+\begin{document}
+
+\handout{Problem Set \theproblemsetnum}
+
+\setlength{\parindent}{0pt}
+\medskip\hrulefill\medskip
+
+{\bf Name:} Gabriel Chiong
+
+\medskip
+
+{\bf Collaborators:} None
+
+\medskip\hrulefill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% See below for common and useful latex constructs. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Some useful commands:
+%$f(x) = \Theta(x)$
+%$T(x, y) \leq \log(x) + 2^y + \binom{2n}{n}$
+% {\tt code\_function}
+
+
+% You can create unnumbered lists as follows:
+%\begin{itemize}
+%    \item First item in a list
+%        \begin{itemize}
+%            \item First item in a list
+%                \begin{itemize}
+%                    \item First item in a list
+%                    \item Second item in a list
+%                \end{itemize}
+%            \item Second item in a list
+%        \end{itemize}
+%    \item Second item in a list
+%\end{itemize}
+
+% You can create numbered lists as follows:
+%\begin{enumerate}
+%    \item First item in a list
+%    \item Second item in a list
+%    \item Third item in a list
+%\end{enumerate}
+
+% You can write aligned equations as follows:
+%\begin{align}
+%    \begin{split}
+%        (x+y)^3 &= (x+y)^2(x+y) \\
+%                &= (x^2+2xy+y^2)(x+y) \\
+%                &= (x^3+2x^2y+xy^2) + (x^2y+2xy^2+y^3) \\
+%                &= x^3+3x^2y+3xy^2+y^3
+%    \end{split}
+%\end{align}
+
+% You can create grids/matrices as follows:
+%\begin{align}
+%    A =
+%    \begin{bmatrix}
+%        A_{11} & A_{21} \\
+%        A_{21} & A_{22}
+%    \end{bmatrix}
+%\end{align}
+
+% You can include images and PDFs as follows:
+% \includegraphics[width=0.5\textwidth]{img.jpg}
+
+\begin{problems}
+
+\problem  % Problem 1
+
+Subproblems:
+\begin{itemize}
+    \item Let $x(i,j)$ be the maximum possible profit by selling $j$ barrels to the suffix of buyers $i,\ldots,n$ for $i \in \{1,\ldots,n+1\}$ and $j \in \{0,\ldots,m\}$.
+\end{itemize}
+
+Relate:
+\begin{itemize}
+    \item Ron can either fulfil or skip order $i$, but if he can only fulfil it if he has at least $a_i$ barrels in stock.
+    \item If he fulfils it, his profit is $x(i,j)=p_i+x(i+1,j-a_i)$, if $j \geq a_i$.
+    \item If he chooses to skip buyer $i$, his profit is $x(i,j)=x(i+1,j)$.
+    \item Therefore the relation is $x(i)=\max\{p_i+x(i+1,j-a_i),x(i+1,j)\}$.
+\end{itemize}
+
+Topological order:
+\begin{itemize}
+    \item $x(i,j)$ only depend on subproblems with strictly larger $i$, so acyclic.
+\end{itemize}
+
+Base:
+\begin{itemize}
+    \item $x(n+1,j)=-sj$, since if there are no more buyers, there is a penalty of $s$ cost per barrel.
+\end{itemize}
+
+Original:
+\begin{itemize}
+    \item $x(1,m)$ is the maximum profit of $m$ barrels to all $n$ buyers.
+    \item Store parent pointers to reconstruct which sales fulfill an optimal order.
+\end{itemize}
+
+Time:
+\begin{itemize}
+    \item There are $(n+1)(m+1)=O(nm)$ subproblems.
+    \item Each subproblem only requires a constant $O(1)$ amount of work.
+    \item Therefore, the overall running time is $O(nm)$ which is pseudopolynomial in the size of the input.
+\end{itemize}
+
+\newpage
+\problem  % Problem 2
+
+Subproblems:
+\begin{itemize}
+    \item Let $x(i,j,c)$ be defined as the maximum possible score playing a game using a substring of pins from $i,\ldots,j$, and all the pins within this range must be knocked down if $c=1$, but unconstrained if $c=0$.
+    \item For all $i \in \{0,\ldots,n\}$, $j \in \{i,\ldots,n\}$, and $c \in \{0,1\}$.
+\end{itemize}
+
+Relate:
+\begin{itemize}
+    \item Player can either choose to knock down pin $i$ or not.
+    \item If $c=0$, the player can choose not to knock down pin $i$.
+    \item Otherwise if $c=1$, the player is forced to knock down pin $i$ in three ways:
+        \begin{itemize}
+            \item Knock down pin $i$ by itself for $v_i$ points.
+            \item Knock down pin $i$ and $i+1$ for $v_i \cdot v_{i+1}$ points.
+            \item Knock down with some pin $k$ for $v_i \cdot v_k$ points, where $k \in \{i+2,\ldots,j-1\}$.
+        \end{itemize}
+    \item $x(i,j,c)=\max\left\{\begin{array}{lr}
+        x(i+1,j,c), & \text{if } c=0 \\
+        v_i+x(i+1,j,c), & \text{if } i<j \\
+        \max_{k\in\{i+1,\ldots,j-1\}} v_i \cdot v_k+x(i+1,k-1,1)+x(k+1,j,c), & \text{if } i+1<j
+    \end{array}\right\}$
+\end{itemize}
+
+Topological order:
+\begin{itemize}
+    \item $x(i,j)$ only depend on subproblems with strictly smaller $j-i$, so acyclic.
+\end{itemize}
+
+Base:
+\begin{itemize}
+    \item In the case where there are no more pins, there is no more value to be earned, so $x(i,i,k)=0$.
+    \item For $i \in \{0,\ldots,n\}$ and $k \in \{0,1\}$.
+\end{itemize}
+
+Original:
+\begin{itemize}
+    \item The maximum score possible playing with all pins, and unconstrained: $x(0,n,0)$.
+\end{itemize}
+
+Time:
+\begin{itemize}
+    \item There are $O(n^2)$ subproblems, each with $O(n)$ work.
+    \item Therefore, the overall running time is $O(n^3)$, which is polynomial in the size of the input.
+\end{itemize}
+
+\newpage
+\problem  % Problem 3
+
+Subproblems:
+\begin{itemize}
+    \item We define $x(k,s_1,s_2,s_3)$ as \verb|True| if it is possible to partition suffix of items \verb|A[k:]| into four subsets $A_1,A_2,A_3,A_4$, where $s_j=\sum_{a_i\in A_j} a_i$ for all $j \in \{1,2,3\}$, and \verb|False| otherwise.
+    \item For $k\in \{0,\ldots,n\}$ and $s_1,s_2,s_3 \in \{0,\ldots,m\}$.
+\end{itemize}
+
+Relate:
+\begin{itemize}
+    \item We can place integer $a_k$ into any of the four partitions.
+    \item $x(k,s_1,s_2,s_3)=\text{OR}\left\{\begin{array}{lr}
+        x(k+1,s_1-a_k,s_2,s_3), & \text{if } a_k \leq s_1 \\
+        x(k+1,s_1,s_2-a_k,s_3), & \text{if } a_k \leq s_2 \\
+        x(k+1,s_1,s_2,s_3-a_k), & \text{if } a_k \leq s_3 \\
+        x(k+1,s_1,s_2,s_3), & \text{always}
+    \end{array}\right\}$
+\end{itemize}
+
+Topological order:
+\begin{itemize}
+    \item $x(k,s_1,s_2,s_3)$ only depend on subproblems with strictly larger $k$, so acyclic.
+\end{itemize}
+
+Base:
+\begin{itemize}
+    \item $x(n,0,0,0)=\verb|True|$, meaning we can partition zero integers into zero sum subsets.
+    \item $x(n,s_1,s_2,s_3)=\verb|False|$, for any $s_1,s_2,s_3>0$, meaning we cannot partition zero integers into any subset with positive sum.
+    \item For $i\in \{0,\ldots,n\}$ and $k \in \{0,1\}$.
+\end{itemize}
+
+Original:
+\begin{itemize}
+    \item Let $m(0,s_1,s_2,s_3)=\left\{\begin{array}{lr}
+        \max\{s_1,s_2,s_3,m-s_1-s_2-s_3\}, & \text{if } x(0,s_1,s_2,s_3)=\verb|True| \\
+        \infty, & \text{otherwise}
+    \end{array}\right\}$
+    \item Solution to the original problem: $\min\{m(0,s_1,s_2,s_3):s_1,s_2,s_3\in \{0,\ldots,m\}\}$.
+    \item Store parent pointers to reconstruct each subset.
+\end{itemize}
+
+Time:
+\begin{itemize}
+    \item There are $O(m^3n)$ subproblems in total.
+    \item Each subproblem requires $O(1)$ work.
+    \item We need $O(n^3)$ time to compute the original.
+    \item Therefore, overall $O(m^3n)$ running time, which is pseudopolynomial in the size of the input.
+\end{itemize}
+
+\newpage
+\problem  % Problem 4
+First, scan through each of the $O(m^2n)$ at most length-$m$ uncorrupted logs, and insert each word $w$ into a hash table $H$ mapping to frequency $f(w)$. This process computes all $f(w)$ for words appearing in any log in $L_u$ directly in expected $O(m^3n)$ time, since the time to hash each word is linear in its length.
+
+Second, we compute a restoration for each log $l_i$ in $L_c$ via dynammic programming in expected $O(m^3)$ time, leading to an expected $O(m^3n)$ running time in total, which is polynomial in the size of the input (there are at least $\Omega(nm)$ characters in the input).
+
+Subproblems:
+\begin{itemize}
+    \item Let $x(j)$ be defined as the maximum $\sum_{w\in R_{i,j}} f(w)$ for any restoration $R_{i,j}$ of suffix $l_i[j:]$.
+    \item For $j \in \{0,\ldots,|l_i|\leq m\}$.
+\end{itemize}
+
+Relate:
+\begin{itemize}
+    \item Guess the first word in $l_i[j:]$ and recur on the remainder.
+    \item $x(j)=\max\{f(l_i[j:k])+x(k):k \in \{j+1,\ldots,|l_i|\}\}$.
+    \item Where $f(w)=H(w)$ if $w \in H$, and 0 otherwise.
+\end{itemize}
+
+Toplogical order:
+\begin{itemize}
+    \item $x(j)$ depends only on strictly larger $j$, so acyclic.
+\end{itemize}
+
+Base:
+\begin{itemize}
+    \item $x(|l_i|)=0$, if we have no log left to restore.
+\end{itemize}
+
+Original:
+\begin{itemize}
+    \item Solution to the original problem is given by $x(0)$.
+    \item Store parent pointers to reconstruct a restoration achieving value $x(0)$.
+\end{itemize}
+
+Time:
+\begin{itemize}
+    \item There are $O(m)$ subproblems and $O(m^2)$ work for each subproblem, since we have $O(m)$ choices and each hash table lookup costs expected $O(m)$ time).
+    \item Expected $O(m^3)$ running time per restoration.
+\end{itemize}
+
+\end{problems}
+
+\end{document}
